@@ -1,0 +1,35 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+.combo-box
+{
+	-fx-border-radius: 50px;
+	-fx-font-weight: bold; 
+	-fx-background-color: white; 
+}
+
+.button
+{
+	-fx-background-radius: 20px;
+	-fx-font-weight: bold;
+	-fx-background-color: rgb(30, 144, 255);
+	-fx-font-size: 20px;
+	-fx-text-fill: white;
+}
+
+.toggle-button
+{
+	-fx-background-radius: 20px;
+	-fx-padding: 10px;
+	-fx-font-weight: bold;
+	-fx-background-color: rgb(30, 144, 255);
+	-fx-font-size: 20px;
+	-fx-text-fill: white;
+}
+
+.toggle-button:selected
+{
+	-fx-background-radius: 20px;
+	-fx-font-weight: bolder;
+	-fx-background-color: blue;
+	-fx-font-size: 20px;
+	-fx-text-fill: white;
+}
