@@ -1,6 +1,8 @@
 package application;
 
 
+import java.util.Random;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -15,24 +17,39 @@ import javafx.scene.Node;
 public class Main extends Application {
 	final static int WIDTH = 1200;
 	final static int HEIGHT = 850;
+	static int numberNodesX = 60;
+	static int numberNodesY = 36;
 	private Pane root = new Pane();
-	private Board b = new Board(60, 36);
+	private Board b = new Board(numberNodesX, numberNodesY);
 	private Pathfinder p = new Pathfinder();
 	private Node[] panel = Panel.GetPanel(p, b, root).GetObjects();	
-	private ToggleButton placeGoal = (ToggleButton) panel[panel.length-3];
-	private ToggleButton placeInit = (ToggleButton) panel[panel.length-2];
-	private Button createMaze = (Button) panel[panel.length-1];
+	private ToggleButton placeGoal = (ToggleButton) panel[panel.length-4];
+	private ToggleButton placeInit = (ToggleButton) panel[panel.length-3];
+	private Button createMaze = (Button) panel[panel.length-2];
 	@Override
 	public void start(Stage primaryStage) {
+		Random random = new Random();
+		int goalPosX = 0;
+		int goalPosY = 0;
+		int initialPosX = 0;
+		int initialPosY = 0;
+		GraphNode.WIDTH = WIDTH/numberNodesX; 
+		GraphNode.HEIGHT = (HEIGHT-Panel.HEIGHT)/numberNodesY;
+		while(goalPosX == initialPosX && goalPosY == initialPosY) {
+			goalPosX = random.nextInt(numberNodesX);
+			goalPosY = random.nextInt(numberNodesY);
+			initialPosX = random.nextInt(numberNodesX);
+			initialPosY = random.nextInt(numberNodesY);
+		}
 		try {
 			b.Draw(root);
-			b.SetGoal(23, 30, root);
-			b.SetInitial(1, 10, root);
+			b.SetGoal(goalPosX, goalPosY, root);
+			b.SetInitial(initialPosX, initialPosY, root);
 			primaryStage.getIcons().add(new Image("Img/icon.jpg"));
 			Scene scene = new Scene(root,WIDTH,HEIGHT);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());	
 						
-			ToggleButton placeWalls = (ToggleButton) panel[panel.length-4];
+			ToggleButton placeWalls = (ToggleButton) panel[panel.length-5];
 			
 			scene.addEventFilter(MouseEvent.MOUSE_PRESSED, e->{
 				int x=Integer.MIN_VALUE;

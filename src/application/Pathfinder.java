@@ -1,5 +1,6 @@
 package application;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -12,12 +13,17 @@ class Pathfinder {
 	public void DFS(GraphNode[][] board, Pane root)
 	{
 		Stack<GraphNode> stack = new Stack<GraphNode>();
-		stack.push(board[Board.initial.GetX()][Board.initial.GetY()]);
+		GraphNode startNode = board[Board.initial.GetX()][Board.initial.GetY()];
+		stack.push(startNode);
+		
 		while(!stack.isEmpty())
 		{
 			GraphNode currentNode = stack.pop();
 			if(currentNode.getClass() == Board.goal.getClass())
 			{
+				// Reconstruct and set the shortest path
+				ArrayList<GraphNode> path = GraphNode.ReconstructPath(currentNode);
+				GraphNode.SetShortestPath(path);
 				GraphNode.PlayAnimation();
 				return;
 			}
@@ -28,10 +34,16 @@ class Pathfinder {
 				
 				for(int i=0; i<currentNode.GetNeighbours().size(); i++)
 				{
-					if(!(currentNode.GetNeighbours().get(i).IsVisited()) && !(currentNode.GetNeighbours().get(i).IsWall()) 
-						&& (currentNode.GetNeighbours().get(i).getClass() != Board.initial.getClass()))
+					GraphNode neighbor = currentNode.GetNeighbours().get(i);
+					if(!(neighbor.IsVisited()) && !(neighbor.IsWall()) 
+						&& (neighbor.getClass() != Board.initial.getClass()))
 					{
-						stack.push(currentNode.GetNeighbours().get(i));
+						// Set parent for path reconstruction
+						if(neighbor.GetParent() == null)
+						{
+							neighbor.SetParent(currentNode);
+						}
+						stack.push(neighbor);
 					}
 				}
 			}
@@ -41,12 +53,17 @@ class Pathfinder {
 	public void BFS(GraphNode[][] board, Pane root)
 	{
 		Queue<GraphNode> queue = new LinkedList<GraphNode>();
-		queue.add(board[Board.initial.GetX()][Board.initial.GetY()]);
+		GraphNode startNode = board[Board.initial.GetX()][Board.initial.GetY()];
+		queue.add(startNode);
+		
 		while(!queue.isEmpty())
 		{
 			GraphNode currentNode = queue.remove();
 			if(currentNode.getClass() == Board.goal.getClass())
 			{
+				// Reconstruct and set the shortest path
+				ArrayList<GraphNode> path = GraphNode.ReconstructPath(currentNode);
+				GraphNode.SetShortestPath(path);
 				GraphNode.PlayAnimation();
 				return;
 			}
@@ -57,10 +74,16 @@ class Pathfinder {
 				
 				for(int i=0; i<currentNode.GetNeighbours().size(); i++)
 				{
-					if(!(currentNode.GetNeighbours().get(i).IsVisited()) && !(currentNode.GetNeighbours().get(i).IsWall()) 
-						&& (currentNode.GetNeighbours().get(i).getClass() != Board.initial.getClass()))
+					GraphNode neighbor = currentNode.GetNeighbours().get(i);
+					if(!(neighbor.IsVisited()) && !(neighbor.IsWall()) 
+						&& (neighbor.getClass() != Board.initial.getClass()))
 					{
-						queue.add(currentNode.GetNeighbours().get(i));
+						// Set parent for path reconstruction (only if not already set)
+						if(neighbor.GetParent() == null)
+						{
+							neighbor.SetParent(currentNode);
+							queue.add(neighbor);
+						}
 					}
 				}
 			}
@@ -71,12 +94,17 @@ class Pathfinder {
 	{
 		GraphNode.SetAlgo(Algorithm.GBFS);
 		PriorityQueue<GraphNode> queue = new PriorityQueue<GraphNode>();
-		queue.add(board[Board.initial.GetX()][Board.initial.GetY()]);
+		GraphNode startNode = board[Board.initial.GetX()][Board.initial.GetY()];
+		queue.add(startNode);
+		
 		while(!queue.isEmpty())
 		{
 			GraphNode currentNode = queue.remove();
 			if(currentNode.getClass() == Board.goal.getClass())
 			{
+				// Reconstruct and set the shortest path
+				ArrayList<GraphNode> path = GraphNode.ReconstructPath(currentNode);
+				GraphNode.SetShortestPath(path);
 				GraphNode.PlayAnimation();
 				return;
 			}
@@ -87,10 +115,16 @@ class Pathfinder {
 				
 				for(int i=0; i<currentNode.GetNeighbours().size(); i++)
 				{
-					if(!(currentNode.GetNeighbours().get(i).IsVisited()) && !(currentNode.GetNeighbours().get(i).IsWall()) 
-						&& (currentNode.GetNeighbours().get(i).getClass() != Board.initial.getClass()))
+					GraphNode neighbor = currentNode.GetNeighbours().get(i);
+					if(!(neighbor.IsVisited()) && !(neighbor.IsWall()) 
+						&& (neighbor.getClass() != Board.initial.getClass()))
 					{
-						queue.add(currentNode.GetNeighbours().get(i));
+						// Set parent for path reconstruction
+						if(neighbor.GetParent() == null)
+						{
+							neighbor.SetParent(currentNode);
+						}
+						queue.add(neighbor);
 					}
 				}
 			}
@@ -100,22 +134,24 @@ class Pathfinder {
 	public void DijkstraSearch(GraphNode[][] board, Pane root)
 	{
 		GraphNode.SetAlgo(Algorithm.DIJKSTRA);
-		int steps = 0;
 		PriorityQueue<GraphNode> queue = new PriorityQueue<GraphNode>();
-		queue.add(board[Board.initial.GetX()][Board.initial.GetY()]);
+		GraphNode startNode = board[Board.initial.GetX()][Board.initial.GetY()];
+		startNode.SetStep(0);
+		queue.add(startNode);
+		
 		while(!queue.isEmpty())
 		{
 			GraphNode currentNode = queue.remove();
-			if(currentNode.getClass()!=Initial.class && currentNode.GetStep()==0 )
-			{
-				currentNode.SetStep(steps);
-			}
-			steps++;
+			
 			if(currentNode.getClass() == Board.goal.getClass())
 			{
+				// Reconstruct and set the shortest path
+				ArrayList<GraphNode> path = GraphNode.ReconstructPath(currentNode);
+				GraphNode.SetShortestPath(path);
 				GraphNode.PlayAnimation();
 				return;
 			}
+			
 			if(!currentNode.IsWall() && !currentNode.IsVisited())
 			{
 				currentNode.SetVisited();
@@ -123,16 +159,19 @@ class Pathfinder {
 				
 				for(int i=0; i<currentNode.GetNeighbours().size(); i++)
 				{
-					if(!(currentNode.GetNeighbours().get(i).IsVisited()) && !(currentNode.GetNeighbours().get(i).IsWall()) 
-						&& (currentNode.GetNeighbours().get(i).getClass() != Board.initial.getClass()))
+					GraphNode neighbor = currentNode.GetNeighbours().get(i);
+					if(!(neighbor.IsVisited()) && !(neighbor.IsWall()) 
+						&& (neighbor.getClass() != Board.initial.getClass()))
 					{	
-						if(currentNode.GetNeighbours().get(i).GetStep() == 0)
+						int newDistance = currentNode.GetStep() + 1;
+						
+						// Update if we found a shorter path
+						if(neighbor.GetStep() == 0 || newDistance < neighbor.GetStep())
 						{
-							currentNode.GetNeighbours().get(i).SetStep(
-									currentNode.GetStep() + 1	
-									);	
+							neighbor.SetStep(newDistance);
+							neighbor.SetParent(currentNode);
+							queue.add(neighbor);
 						}
-						queue.add(currentNode.GetNeighbours().get(i));
 					}
 				}
 			}
@@ -141,24 +180,25 @@ class Pathfinder {
 	
 	public void AStarSearch(GraphNode[][] board, Pane root)
 	{
-		//Find a way to calculate steps
 		GraphNode.SetAlgo(Algorithm.ASTAR);
-		int steps = 0;
 		PriorityQueue<GraphNode> queue = new PriorityQueue<GraphNode>();
-		queue.add(board[Board.initial.GetX()][Board.initial.GetY()]);
+		GraphNode startNode = board[Board.initial.GetX()][Board.initial.GetY()];
+		startNode.SetStep(0);
+		queue.add(startNode);
+		
 		while(!queue.isEmpty())
 		{
 			GraphNode currentNode = queue.remove();
-			if(currentNode.getClass()!=Initial.class && currentNode.GetStep()==0 )
-			{
-				currentNode.SetStep(steps);
-			}
-			steps++;
+			
 			if(currentNode.getClass() == Board.goal.getClass())
 			{
+				// Reconstruct and set the shortest path
+				ArrayList<GraphNode> path = GraphNode.ReconstructPath(currentNode);
+				GraphNode.SetShortestPath(path);
 				GraphNode.PlayAnimation();
 				return;
 			}
+			
 			if(!currentNode.IsWall() && !currentNode.IsVisited())
 			{
 				if(currentNode.getClass()!=Initial.class)
@@ -169,16 +209,19 @@ class Pathfinder {
 				
 				for(int i=0; i<currentNode.GetNeighbours().size(); i++)
 				{
-					if(!(currentNode.GetNeighbours().get(i).IsVisited()) && !(currentNode.GetNeighbours().get(i).IsWall()) 
-						&& (currentNode.GetNeighbours().get(i).getClass() != Board.initial.getClass()))
+					GraphNode neighbor = currentNode.GetNeighbours().get(i);
+					if(!(neighbor.IsVisited()) && !(neighbor.IsWall()) 
+						&& (neighbor.getClass() != Board.initial.getClass()))
 					{	
-						if(currentNode.GetNeighbours().get(i).GetStep() == 0)
+						int newDistance = currentNode.GetStep() + 1;
+						
+						// Update if we found a shorter path
+						if(neighbor.GetStep() == 0 || newDistance < neighbor.GetStep())
 						{
-							currentNode.GetNeighbours().get(i).SetStep(
-									currentNode.GetStep() + 1	
-									);	
+							neighbor.SetStep(newDistance);
+							neighbor.SetParent(currentNode);
+							queue.add(neighbor);
 						}
-						queue.add(currentNode.GetNeighbours().get(i));
 					}
 				}
 			}

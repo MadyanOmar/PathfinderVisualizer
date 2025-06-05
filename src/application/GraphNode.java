@@ -17,23 +17,29 @@ enum Algorithm
 }
 
 class GraphNode implements Comparable<GraphNode> {
-	static final int WIDTH = 20;
-	static final int HEIGHT = 20;
+	static int WIDTH = 40;
+	static int HEIGHT = 40;
 	private int steps;
 	static private SequentialTransition animation;
+	static private SequentialTransition pathAnimation;
+	static private ArrayList<GraphNode> shortestPath;
 	private static Algorithm algo = Algorithm.ASTAR;
 	private static boolean addWalls = false;
 	ArrayList<GraphNode> neighbours;
 	private boolean isVisited = false;
 	private boolean isWall = false;
+	private boolean isInPath = false;
 	private int posX;
 	private int posY;
+	private GraphNode parent; // For path reconstruction
 	
 	public GraphNode(int posX, int posY)
 	{
+		
 		this.posX = posX * WIDTH;
 		this.posY = posY * HEIGHT + Panel.HEIGHT;
 		this.steps = 0;
+		this.parent = null;
 		neighbours = new ArrayList<GraphNode>();
 	}
 	
@@ -78,12 +84,36 @@ class GraphNode implements Comparable<GraphNode> {
 		return steps;
 	}
 	
+	public void SetParent(GraphNode parent)
+	{
+		this.parent = parent;
+	}
+	
+	public GraphNode GetParent()
+	{
+		return parent;
+	}
+	
+	public void SetInPath(boolean inPath)
+	{
+		this.isInPath = inPath;
+	}
+	
+	public boolean IsInPath()
+	{
+		return isInPath;
+	}
+	
 	public void Reset()
 	{
 		steps = 0;
 		animation = null;
+		pathAnimation = null;
+		shortestPath = null;
 		neighbours = null;
 		isVisited = false;
+		isInPath = false;
+		parent = null;
 	}
 	
 	public void DeleteNeighbours()
@@ -127,7 +157,68 @@ class GraphNode implements Comparable<GraphNode> {
 	
 	public static void PlayAnimation()
 	{
-		animation.play();
+		if(animation != null)
+		{
+			animation.play();
+		}
+	}
+	
+	public static void PlayPathAnimation()
+	{
+		if(pathAnimation != null)
+		{
+			pathAnimation.play();
+		}
+	}
+	
+	public static void SetShortestPath(ArrayList<GraphNode> path)
+	{
+		shortestPath = path;
+	}
+	
+	public static ArrayList<GraphNode> GetShortestPath()
+	{
+		return shortestPath;
+	}
+	
+	// Reconstruct path from goal to initial using parent pointers
+	public static ArrayList<GraphNode> ReconstructPath(GraphNode goalNode)
+	{
+		ArrayList<GraphNode> path = new ArrayList<GraphNode>();
+		GraphNode current = goalNode;
+		
+		while(current != null)
+		{
+			path.add(0, current); // Add to front to reverse the path
+			current = current.GetParent();
+		}
+		
+		return path;
+	}
+	
+	// Create path animation
+	public static void CreatePathAnimation(Pane root)
+	{
+		if(shortestPath == null || shortestPath.isEmpty())
+		{
+			Panel.GetPanel().EnablePanel();
+			return;
+		}
+		
+		animation = null;
+		
+		// Mark nodes as part of path and create animations
+		for(int i = 1; i < shortestPath.size() - 1; i++) // Skip initial and goal
+		{
+			GraphNode node = shortestPath.get(i);
+			node.SetInPath(true);
+			node.Draw(root);			
+		}
+		
+		animation.setOnFinished(e -> {
+			Panel.GetPanel().EnablePanel();
+		});
+		
 	}
 	
 	public boolean IsWall()
@@ -168,7 +259,26 @@ class GraphNode implements Comparable<GraphNode> {
 			}
 		});
 		
-		if(isVisited)
+		if(isInPath)
+		{
+			rect.setFill(Color.MEDIUMVIOLETRED);
+			rect.setStroke(Color.BLACK);
+			rect.setStrokeWidth(2);
+			FadeTransition a = new FadeTransition(Duration.seconds(0.05), rect);
+			FillTransition anim = new FillTransition(Duration.seconds(0.3), rect);
+			anim.setFromValue(Color.MEDIUMVIOLETRED);
+			anim.setToValue(Color.GOLD);
+			anim.setCycleCount(1);
+			a.setOnFinished(e->{
+				anim.play();
+			});
+			if(animation == null)
+			{
+				animation = new SequentialTransition();
+			}
+			animation.getChildren().add(a);
+		}
+		else if(isVisited)
 		{
 			rect.setFill(Color.WHITE);
 			rect.setStroke(Color.BLACK);
@@ -186,7 +296,9 @@ class GraphNode implements Comparable<GraphNode> {
 			{
 				animation = new SequentialTransition();
 				animation.setOnFinished(e->{
-					Panel.GetPanel().EnablePanel();
+					// After search animation, create and play path animation
+					CreatePathAnimation(root);
+					animation.play();
 				});
 			}
 			animation.getChildren().add(a);
@@ -207,7 +319,6 @@ class GraphNode implements Comparable<GraphNode> {
 
 	@Override
 	public int compareTo(GraphNode other) {
-		// TODO Auto-generated method stub
 		if(algo == Algorithm.GBFS)
 		{
 			if(this.GetManhattanDistance(Board.goal) > other.GetManhattanDistance(Board.goal))
@@ -267,7 +378,6 @@ class Goal extends GraphNode
 		root.getChildren().add(rect);
 	}
 }
-
 
 class Initial extends GraphNode
 {

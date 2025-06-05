@@ -21,7 +21,7 @@ public class Panel {
 	private Node[] objects;
 	public Panel(Pathfinder p, Board b, Pane root)
 	{
-		objects = new Node[8];
+		objects = new Node[9];
 		Rectangle rect = new Rectangle(0,0, Main.WIDTH, HEIGHT);
 		Button button = new Button("Start");
 		Button reset = new Button("Reset");
@@ -33,8 +33,17 @@ public class Panel {
 		input.getItems().addAll("Depth First Search",
 							 "Breadth First Search",
 							 "Greedy Best First Search",
-							 "A* Search",
-							 "Dijkstra's Algorithm");
+							 "A* Search");
+		ComboBox<String> size = new ComboBox<String>();
+		size.getItems().addAll("15x9",
+							 "25x15",
+							 "30x18",
+							 "60x36");
+		
+		size.setLayoutX(40);
+		size.setLayoutY(60);
+		size.getSelectionModel().select(0);
+		
 		input.setLayoutX(40);
 		input.setLayoutY(30);
 		input.getSelectionModel().select(0);
@@ -62,26 +71,39 @@ public class Panel {
 		button.setLayoutX(Main.WIDTH/2 - 100);
 		button.setLayoutY(50);
 		button.setOnMouseClicked(e->{
-			String choice = input.getValue().toString();
-			if(choice.equals("Depth First Search"))
+			String choice1 = input.getValue().toString();
+			String choice2 = size.getValue().toString();
+			if(choice2.equals("15x9")) {
+				Main.numberNodesX = 15;
+				Main.numberNodesY = 9;
+			}
+			if(choice2.equals("25x15")) {
+				Main.numberNodesX = 25;
+				Main.numberNodesY = 15;
+			}
+			if(choice2.equals("30x18")) {
+				Main.numberNodesX = 30;
+				Main.numberNodesY = 18;
+			}
+			if(choice2.equals("60x36")) {
+				Main.numberNodesX = 60;
+				Main.numberNodesY = 36;
+			}
+			if(choice1.equals("Depth First Search"))
 			{
 				p.DFS(b.getBoard(), root);
 			}
-			if(choice.equals("Breadth First Search"))
+			if(choice1.equals("Breadth First Search"))
 			{
 				p.BFS(b.getBoard(), root);
 			}
-			if(choice.equals("Greedy Best First Search"))
+			if(choice1.equals("Greedy Best First Search"))
 			{
 				p.GBFS(b.getBoard(), root);
 			}
-			if(choice.equals("A* Search"))
+			if(choice1.equals("A* Search"))
 			{
 				p.AStarSearch(b.getBoard(), root);
-			}
-			if(choice.equals("Dijkstra's Algorithm"))
-			{
-				p.DijkstraSearch(b.getBoard(), root);
 			}
 			DisablePanel();
 		});
@@ -121,6 +143,7 @@ public class Panel {
 			b.Draw(root);
 			b.AddNeighbours();
 		});
+		
 		objects[0] = rect;
 		objects[1] = button;
 		objects[2] = input;
@@ -129,6 +152,7 @@ public class Panel {
 		objects[5] = placeGoal;
 		objects[6] = placeInit;
 		objects[7] = createMaze;
+		objects[8] = size;
 	}
 	
 	public static Panel GetPanel(Pathfinder p, Board b, Pane root)
