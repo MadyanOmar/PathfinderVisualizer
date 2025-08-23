@@ -1,6 +1,9 @@
 
 # Pathfinder Visualizer
 
+# How to use:
+Each node in the board can be turned into a wall or free path using LMB click and the initial and goal nodes can be moved around the maze using LMB drag.
+
 This project uses various search algorithms to navigate around a maze in order to find a target node. The project was created using JavaFX and requires JRE 1.8.0 minimum. You can run the application by downloading the PathfinderVisualizer.exe for Windows or PathfinderVisualizer.jar for Mac. You can view some of the visualizations below:
 
 ### Depth First Search
