@@ -1,0 +1,47 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.panel-view {
+    -fx-background-color: linear-gradient(to bottom, #fdfdfd, #dceeff);
+    -fx-border-color: #99c2ff;
+    -fx-border-width: 0 0 2 0;
+    -fx-effect: dropshadow(gaussian, rgba(100, 100, 255, 0.2), 10, 0.2, 0, 2);
+}
+
+.panel-content {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+}
+
+.panel-content Label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+.combo-box, .check-box {
+    -fx-background-color: white;
+    -fx-border-color: #99c2ff;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: #99c2ff;
+}
+
+.combo-box:hover, .check-box:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
+    -fx-cursor: hand;
+}
+
+.button {
+    -fx-background-color: #448aff;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-padding: 8 16;
+}
+
+.button:hover {
+    -fx-background-color: #2979ff;
+    -fx-cursor: hand;
+}

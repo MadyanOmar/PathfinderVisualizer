@@ -1,35 +1,47 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
-.combo-box
-{
-	-fx-border-radius: 50px;
-	-fx-font-weight: bold; 
-	-fx-background-color: white; 
+
+.panel-view {
+    -fx-background-color: linear-gradient(to bottom, #fdfdfd, #dceeff);
+    -fx-border-color: #99c2ff;
+    -fx-border-width: 0 0 2 0;
+    -fx-effect: dropshadow(gaussian, rgba(100, 100, 255, 0.2), 10, 0.2, 0, 2);
 }
 
-.button
-{
-	-fx-background-radius: 20px;
-	-fx-font-weight: bold;
-	-fx-background-color: rgb(30, 144, 255);
-	-fx-font-size: 20px;
-	-fx-text-fill: white;
+.panel-content {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
 }
 
-.toggle-button
-{
-	-fx-background-radius: 20px;
-	-fx-padding: 10px;
-	-fx-font-weight: bold;
-	-fx-background-color: rgb(30, 144, 255);
-	-fx-font-size: 20px;
-	-fx-text-fill: white;
+.panel-content Label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
 }
 
-.toggle-button:selected
-{
-	-fx-background-radius: 20px;
-	-fx-font-weight: bolder;
-	-fx-background-color: blue;
-	-fx-font-size: 20px;
-	-fx-text-fill: white;
+.combo-box, .check-box {
+    -fx-background-color: white;
+    -fx-border-color: #99c2ff;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: #99c2ff;
+}
+
+.combo-box:hover, .check-box:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
+    -fx-cursor: hand;
+}
+
+.button {
+    -fx-background-color: #448aff;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-padding: 8 16;
+}
+
+.button:hover {
+    -fx-background-color: #2979ff;
+    -fx-cursor: hand;
 }
